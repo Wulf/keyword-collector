@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Presentation Tool Client</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 1em Helvetica, Arial; margin: 0.5em; }
+      input { width: 100%; padding: 0.5em; margin-bottom: 0.5em; }
+      button { width: 100%; padding: 0.5em; }
+    </style>
+  </head>
+  <body>
+    <h1>Keyword Collector</h6>
+    <form action="">
+	  <p id="info"></p>
+      <label for="m">Keyword 1</label>
+      <input id="m" autocomplete="off" /><br />
+      <label for="m2">Keyword 2</label>
+      <input id="m2" autocomplete="off" /><br />
+      <button type="button">Send</button>
+    </form>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+	  var sent = false;
+	  var word1 = "";
+	  var word2 = "";
+      var socket = io();
+      $('button').click(function(){
+        if(!sent) {
+			sent = true;
+			word1 = $('#m').val();
+			word2 = $('#m2').val();
+			socket.emit('word message', word1);
+			socket.emit('word message', word2);
+			$('#m').val('');
+			$('#m2').val('');
+			$('#info').text('Sent Word(s)!');
+			return false;
+		} else {
+			$('#info').text('Already sent words: ' + word1 + ', ' + word2);
+		}
+      });
+	  socket.on('reset', function(msg) {
+		sent = false;
+		$('#info').text('Accepting submissions!');
+	  });
+    </script>
+  </body>
+</html>

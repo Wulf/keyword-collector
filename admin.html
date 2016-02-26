@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Panel</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 1em Helvetica, Arial; margin: 0.5em; }
+      input { width: 100%; padding: 0.5em; margin-bottom: 0.5em; }
+      button { width: 100%; padding: 0.5em; }
+    </style>
+  </head>
+  <body>
+	<p id="info"></p>
+	<form action="">
+		<button type="button">Turn ON</button>
+    </form>
+	<ul id="words"></ul>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+	  var on = false;
+	  var words = [];
+      var socket = io();
+      $('button').click(function(){
+        if(!on) {
+			on = true;
+			$("#info").text("Turned on!");
+			$("button").text("Turn OFF");
+			socket.emit('reset');
+			return false;
+		} else {
+			$('#info').text('Turned off!');
+			$("button").text("Turn ON");
+			on = false;
+			genWordList();
+			return false;
+		}
+      });
+	  socket.on('word message', function(msg) {
+		if(on) {
+			if(!words[msg]) {
+				words[msg] = 1;
+			} else {
+				words[msg] = words[msg] + 1;
+			}
+			words.sort();
+			genWordList();
+		}
+	  });
+	  function genWordList() {
+	  	$listSelector = $("#words")
+		$listSelector.empty();
+		for(var key in words) {
+			$listSelector.append('<li style="font-size:' + (10 + 3*words[key]) +'px"> '+key+'</li>');
+		}
+	  }
+    </script>
+  </body>
+</html>
